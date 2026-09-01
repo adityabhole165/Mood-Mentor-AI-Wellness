@@ -5,7 +5,7 @@
 ```
                               INPUT SOURCES
         ┌───────────┬────────────┬────────────┬────────────┐
-        │  Chat text │  .txt file │  .csv file │ PDF / Word │  <- Milestone 3
+        │  Chat text │  .txt file │  .csv file │ PDF / Word │  <- Milestone 
         └─────┬──────┴─────┬──────┴─────┬──────┴─────┬──────┘
               │            │            │            │
               ▼            ▼            ▼            ▼
