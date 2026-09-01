@@ -1,0 +1,11 @@
+pandas>=2.0
+numpy>=1.26
+nltk>=3.9
+vaderSentiment>=3.3.2
+pytest>=8.0
+streamlit
+# Milestone 2+ (transformer-based emotion classification) -- not required for Milestone 1
+# transformers>=4.40
+# torch>=2.2
+# datasets>=2.19
+# scikit-learn>=1.4

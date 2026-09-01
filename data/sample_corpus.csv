@@ -1,0 +1,13 @@
+id,text,expected_label
+1,"I had such an amazing day today, everything went perfectly!",positive
+2,"I'm so stressed and anxious about my exams, I can't sleep at night",negative
+3,"The report is due on Friday and needs three signatures.",neutral
+4,"Thank you so much for your help, I really appreciate it!",positive
+5,"I feel completely overwhelmed and exhausted from work this week.",negative
+6,"The office is located on the fourth floor near the elevator.",neutral
+7,"This is honestly the best team I have ever worked with",positive
+8,"I'm furious about how that meeting was handled, it was so disrespectful.",negative
+9,"    ",invalid_empty
+10,"!!!???...",invalid_noise
+11,"I don't know how I feel, it's a bit of both good and bad today.",neutral
+12,"Losing my job was devastating, I don't know what to do next",negative

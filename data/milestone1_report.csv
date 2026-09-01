@@ -1,0 +1,25 @@
+id,source,input_text,processed_text,sentiment_label,compound,pos,neg,neu,is_valid,error
+0,raw_text,I'm feeling really good about this project today!,'m feel really good project today,positive,0.6105,0.454,0.0,0.546,True,
+1,raw_text,,,,,,,,False,Input is empty or whitespace-only
+2,txt_file,I absolutely love how this app helps me track my mood every day!,absolutely love app help track mood every day,positive,0.8118,0.402,0.0,0.598,True,
+3,txt_file,"I'm so stressed and anxious about work, I can't sleep at all.",'m stressed anxious work ca n't sleep,negative,-0.6068,0.0,0.331,0.669,True,
+4,txt_file,The meeting is scheduled for 3pm tomorrow.,meeting schedule 3pm tomorrow,neutral,0.0,0.0,0.0,1.0,True,
+5,txt_file,"This is the worst day ever, nothing is going right.",worst day ever nothing go right,negative,-0.6249,0.0,0.313,0.687,True,
+6,txt_file,Feeling calm and grateful after my evening walk.,feel calm grateful evening walk,positive,0.7003,0.576,0.0,0.424,True,
+7,txt_file,"I don't know how I feel today, just kind of numb.",n't know feel today kind numb,negative,-0.4005,0.0,0.212,0.788,True,
+8,txt_file,"Best therapy session I've had in months, finally feel heard!",best therapy session 've month finally feel heard,positive,0.6696,0.333,0.0,0.667,True,
+9,txt_file,"Ugh, another sleepless night. So tired of this.",ugh another sleepless night tire,negative,-0.7609,0.0,0.522,0.478,True,
+10,txt_file,"Had a great workout this morning, energy is through the roof!!",great workout morning energy roof,positive,0.7772,0.43,0.0,0.57,True,
+11,txt_file,"Not sure if I'm okay or not, mixed feelings I guess.",sure 'm okay mixed feeling guess,neutral,-0.016,0.148,0.153,0.7,True,
+12,csv_file,"I had such an amazing day today, everything went perfectly!",amazing day today everything go perfectly,positive,0.8516,0.509,0.0,0.491,True,
+13,csv_file,"I'm so stressed and anxious about my exams, I can't sleep at night",'m stressed anxious exam ca n't sleep night,negative,-0.6068,0.0,0.311,0.689,True,
+14,csv_file,The report is due on Friday and needs three signatures.,report due friday need three signature,neutral,0.0,0.0,0.0,1.0,True,
+15,csv_file,"Thank you so much for your help, I really appreciate it!",thank much help really appreciate,positive,0.8169,0.515,0.0,0.485,True,
+16,csv_file,I feel completely overwhelmed and exhausted from work this week.,feel completely overwhelmed exhaust work week,negative,-0.3117,0.122,0.225,0.653,True,
+17,csv_file,The office is located on the fourth floor near the elevator.,office locate fourth floor near elevator,neutral,0.0,0.0,0.0,1.0,True,
+18,csv_file,This is honestly the best team I have ever worked with,honestly best team ever work,positive,0.802,0.444,0.0,0.556,True,
+19,csv_file,"I'm furious about how that meeting was handled, it was so disrespectful.",'m furious meeting handle disrespectful,negative,-0.5719,0.0,0.252,0.748,True,
+20,csv_file,    ,,,,,,,False,Input is empty or whitespace-only
+21,csv_file,!!!???...,,,,,,,False,Input contains no analyzable text (symbols/punctuation only)
+22,csv_file,"I don't know how I feel, it's a bit of both good and bad today.",n't know feel 's bit good bad today,negative,-0.1531,0.149,0.18,0.67,True,
+23,csv_file,"Losing my job was devastating, I don't know what to do next",lose job devastate n't know next,negative,-0.7845,0.0,0.408,0.592,True,
