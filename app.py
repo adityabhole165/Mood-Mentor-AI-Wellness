@@ -96,7 +96,7 @@ if mode == "💬 Chat Text":
                         st.metric(
                             "Average Compound",
                             round(
-                                summary.get("avg_compound", 0),
+                                summary.get("avg_compound_score", 0),
                                 3
                             )
                         )
@@ -189,7 +189,7 @@ elif mode == "📄 TXT File":
                     st.metric(
                         "Average Compound",
                         round(
-                            summary.get("avg_compound", 0),
+                            summary.get("avg_compound_score", 0),
                             3
                         )
                     )
@@ -296,7 +296,7 @@ elif mode == "📊 CSV File":
                     st.metric(
                         "Average Compound",
                         round(
-                            summary.get("avg_compound", 0),
+                            summary.get("avg_compound_score", 0),
                             3
                         )
                     )
