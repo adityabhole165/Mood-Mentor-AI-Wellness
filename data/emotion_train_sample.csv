@@ -1,0 +1,46 @@
+text,joy,sadness,anger,fear,surprise,disgust
+"I got the job offer I've been waiting for!!",1,0,0,0,0,0
+"I am thrilled but a bit scared about moving cities",1,0,0,1,0,0
+"My best friend moved away and I miss her so much",0,1,0,0,0,0
+"He lied to me again and I am furious",0,0,1,0,0,0
+"I heard footsteps behind me in the dark alley and froze",0,0,0,1,0,0
+"The surprise party left me speechless, I never expected it",0,0,0,0,1,0
+"The smell coming from the fridge made me want to throw up",0,0,0,0,0,1
+"I can't believe we won the championship, best day ever!",1,0,0,0,1,0
+"Losing my job was devastating and I don't know what's next",0,1,0,1,0,0
+"Why would you do this to me, I trusted you!",0,0,1,0,0,0
+"The horror movie had me jumping out of my seat",0,0,0,1,1,0
+"Finding a cockroach in my food ruined my appetite completely",0,0,0,0,0,1
+"I'm so proud of how far I've come this year",1,0,0,0,0,0
+"The funeral was one of the saddest days of my life",0,1,0,0,0,0
+"My blood boiled when he cut in line and started yelling",0,0,1,0,0,0
+"I'm terrified of what the doctor might say tomorrow",0,0,0,1,0,0
+"She showed up at my door out of nowhere, what a shock",0,0,0,0,1,0
+"The rotten milk smell in the kitchen was disgusting",0,0,0,0,0,1
+"omg i just got accepted!! literally screaming rn",1,0,0,0,1,0
+"i'm kinda sad but also relieved it's finally over",0,1,0,0,0,0
+"ngl that comment made me so mad i had to log off",0,0,1,0,0,0
+"not gonna lie i'm shaking, this interview is terrifying",0,0,0,1,0,0
+"wait WHAT did that actually just happen??",0,0,0,0,1,0
+"ew that's actually so gross i can't even look at it",0,0,0,0,0,1
+"Winning the scholarship felt like a dream come true",1,0,0,0,1,0
+"I cried myself to sleep after the breakup",0,1,0,0,0,0
+"The referee's terrible call made the whole crowd angry",0,0,1,0,0,0
+"My hands were trembling as I waited for the results",0,0,0,1,0,0
+"I opened the box and nearly fainted, I never expected a puppy",1,0,0,0,1,0
+"The dumpster behind the restaurant reeked, absolutely revolting",0,0,0,0,0,1
+"I felt so betrayed and hurt when my partner cheated",0,1,1,0,0,0
+"The thunder was so loud it scared the kids and made them cry",0,1,0,1,0,0
+"I'm nervous about the exam but also kind of excited to finally be done",1,0,0,1,0,0
+"Watching my daughter graduate filled me with joy and pride",1,0,0,0,0,0
+"The traffic this morning was infuriating, I was 40 minutes late",0,0,1,0,0,0
+"The meeting has been rescheduled to 3pm on Friday",0,0,0,0,0,0
+"Please send the quarterly report by end of day",0,0,0,0,0,0
+"I don't really have strong feelings about this either way",0,0,0,0,0,0
+"The abandoned house gave me chills and I felt sick to my stomach",0,0,0,1,0,1
+"We celebrated all night after the surprise engagement announcement",1,0,0,0,1,0
+"I was disgusted and furious when I saw how they treated the staff",0,0,1,0,0,1
+"After months of therapy I finally feel a mix of relief and sadness letting go",0,1,0,0,0,0
+"The plot twist at the end shocked everyone in the theater",0,0,0,0,1,0
+"I threw away the spoiled leftovers, the smell alone made me gag",0,0,0,0,0,1
+"She burst into tears of joy when she saw the surprise reunion",1,0,0,0,1,0
