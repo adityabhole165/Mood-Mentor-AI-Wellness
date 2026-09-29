@@ -1,40 +1,32 @@
+
 .venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-.streamlit/
-.env
+.coverage
+htmlcov/
+reports/
+data/*.db
+data/emotion_history.csv
 *.log
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-
-# Virtual environments
-venv/
+.env
 .venv/
-env/
-
-# Environment variables / secrets
-.env
-.env.*
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+reports/
+data/*.db
+data/emotion_history.csv
+data/interactions.csv
+data/recommendation_feedback.csv
 *.log
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Model/data files
-*.pt
-*.pth
-*.bin
-*.ckpt
+.env
+moodmentor.egg-info/
+models/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/React src.zip
+old_app.py

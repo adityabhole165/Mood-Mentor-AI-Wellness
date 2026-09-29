@@ -15,9 +15,9 @@ class RankedRecommendation:
     def to_dict(self): return asdict(self)
 
 class RecommendationRanker:
-    def __init__(self, low_relevance_threshold=0.20):
+    def __init__(self, low_relevance_threshold=0.18):
         self.low_relevance_threshold = low_relevance_threshold
-
+        
     def _weights(self, intensity):
         # Higher intensity gives emotion/ML relevance slightly more influence.
         raw = {
@@ -65,5 +65,7 @@ class RecommendationRanker:
                  "user_preference":round(row["preference_score"],6),"content_similarity":round(row["content_similarity"],6),
                  "collaborative_score":round(row["collaborative_score"],6),"previous_interaction":round(row["history_affinity"],6),
                  "rule_score":round(row["rule_score"],6),"personalized_ml_score":round(row["personalized_ml_score"],6),
+                 "feedback_ml_score":round(row.get("feedback_ml_score", 0.0),6),
+                 "feedback_learning_active":bool(row.get("feedback_learning_active", False)),
                  "ranking_weights":weights}, row["content"].url))
         return results

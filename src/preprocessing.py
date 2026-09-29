@@ -27,11 +27,22 @@ from typing import List
 
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, wordpunct_tokenize
 from nltk import pos_tag
 
 _LEMMATIZER = WordNetLemmatizer()
-_STOPWORDS = set(stopwords.words("english"))
+try:
+    _STOPWORDS = set(stopwords.words("english"))
+except LookupError:
+    # Keep the application/test suite usable before the optional NLTK corpus
+    # download. The full NLTK list is used automatically when installed.
+    _STOPWORDS = {
+        "a", "an", "and", "are", "as", "at", "be", "by", "for", "from",
+        "has", "have", "he", "her", "hers", "him", "his", "i", "in", "is",
+        "it", "its", "me", "my", "of", "on", "or", "our", "she", "that",
+        "the", "their", "them", "they", "this", "to", "was", "we", "were",
+        "will", "with", "you", "your", "yours", "but", "if", "so", "than",
+    }
 
 # Emoji ranges we deliberately KEEP (they carry emotion signal)
 _EMOJI_PATTERN = re.compile(
@@ -70,7 +81,13 @@ def clean_text(text: str) -> str:
 def tokenize(text: str) -> List[str]:
     if not text:
         return []
-    return [tok.lower() for tok in word_tokenize(text) if tok.strip()]
+    try:
+        tokens = word_tokenize(text)
+    except LookupError:
+        # wordpunct_tokenize needs no external corpus. It is a safe fallback;
+        # punctuation is filtered by the next preprocessing stage.
+        tokens = wordpunct_tokenize(text)
+    return [tok.lower() for tok in tokens if tok.strip()]
 
 
 def _is_punctuation_only(token: str) -> bool:
@@ -103,8 +120,19 @@ def lemmatize(tokens: List[str]) -> List[str]:
     word is a noun, so 'running'/'runs' never collapse to 'run'."""
     if not tokens:
         return []
-    tagged = pos_tag(tokens)
-    return [_LEMMATIZER.lemmatize(tok, pos=_wordnet_pos(tag)) for tok, tag in tagged]
+    try:
+        tagged = pos_tag(tokens)
+    except LookupError:
+        tagged = [(tok, "NN") for tok in tokens]
+    result = []
+    for tok, tag in tagged:
+        try:
+            result.append(_LEMMATIZER.lemmatize(tok, pos=_wordnet_pos(tag)))
+        except LookupError:
+            # Without WordNet data, retain the token rather than crashing the
+            # complete pipeline. setup_nltk.py enables full lemmatization.
+            result.append(tok)
+    return result
 
 
 def preprocess_text(text: str) -> ProcessedText:

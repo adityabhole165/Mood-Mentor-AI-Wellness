@@ -1,332 +1,94 @@
-# Emotion-Aware Recommendation System
+# MoodMentor
 
-An emotion-aware recommendation system built with Python. The project combines emotion detection, sentiment analysis, semantic matching, collaborative filtering, and hybrid recommendation techniques to generate personalized recommendations based on user interactions and emotional state.
+MoodMentor analyses free-text check-ins and returns an emotional state plus
+personalised, explainable wellness recommendations.
 
-## Project Structure
+- **Sentiment** – VADER baseline (compound / positive / negative / neutral)
+- **Emotion** – fine-tuned BERT and DistilBERT, multi-label over six emotions:
+  joy, sadness, anger, fear, surprise, disgust, each with a confidence score
+- **Emotional state** – dominant emotion, intensity, polarity, severity, mixed states
+- **Recommendations** – hybrid engine (rules, content-based, preferences,
+  collaborative filtering, emotion similarity, history), semantic matching with
+  sentence embeddings, dynamic ranking, per-item explanations, feedback learning
+- **Insights** – daily / weekly / monthly emotion trends, history, search and
+  filters, CSV and PDF reports, user-scoped data deletion
 
-```text
-.
-├── src/
-│   ├── build_ekman_dataset.py
-│   ├── collaborative_filtering.py
-│   ├── confidence.py
-│   ├── data_loader.py
-│   ├── emotional_state.py
-│   ├── emotion_bert.py
-│   ├── emotion_dataset.py
-│   ├── emotion_distilbert.py
-│   ├── evaluation.py
-│   ├── fetch_isear.py
-│   ├── hybrid_recommender.py
-│   ├── ingestion.py
-│   ├── interaction_service.py
-│   ├── isear_validation.py
-│   ├── milestone2_validation.py
-│   ├── milestone3_validation.py
-│   ├── personalized_recommender.py
-│   ├── pipeline.py
-│   ├── pipeline_v2.py
-│   ├── pipeline_v3.py
-│   ├── preprocessing.py
-│   ├── ranking.py
-│   ├── recommendation_data.py
-│   ├── report.py
-│   ├── semantic_matching.py
-│   ├── sentiment.py
-│   ├── train_models.py
-│   └── __init__.py
-│
-├── README.md
-├── .gitignore
-└── requirements.txt
+> Wellness recommendations are general information. They are not medical
+> diagnosis or treatment.
+
+## Ways to use it
+
+| Interface | Command | Default URL |
+|---|---|---|
+| Streamlit dashboard | `streamlit run app.py` | http://localhost:8501 |
+| REST API (FastAPI) | `uvicorn src.api:app --reload` | http://localhost:8000/docs |
+| React dashboard | `cd frontend && npm install && npm run dev` | http://localhost:5173 |
+| CLI | `moodmentor --help` | – |
+| Docker | `docker compose up --build` | 8501 and 8000 |
+
+## Quick start (Windows PowerShell)
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements_m4.txt
+python scripts/setup_nltk.py
+pip install -e .
+python -m pytest -q
+streamlit run app.py
 ```
 
-## Features
+Linux / macOS: replace the activate line with `source .venv/bin/activate`.
 
-* Emotion detection from text
-* Sentiment analysis
-* Emotion-aware recommendation
-* Personalized recommendations
-* Collaborative filtering
-* Hybrid recommendation
-* Semantic matching
-* Confidence scoring
-* Data preprocessing and ingestion
-* Model training and evaluation
-* Validation scripts for different development milestones
+The BERT and DistilBERT weights are **not** stored in the repository. Put them
+in `models/bert_emotion/` and `models/distilbert_emotion/`, or train them
+(see [docs/MODEL_CARD.md](docs/MODEL_CARD.md)). Without them, the M1 pipeline
+(ingestion, preprocessing, VADER) and the deterministic recommendation
+components still run; the emotion stages report that the model is missing.
 
-## Requirements
+## Project layout
 
-Make sure Python is installed on your system.
-
-Recommended Python version:
-
-```text
-Python 3.10+
 ```
-
-Install the required dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-If you do not have a `requirements.txt` file yet, you can create one after installing your project's dependencies:
-
-```bash
-pip freeze > requirements.txt
-```
-
-## Running the Project
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-cd YOUR_REPOSITORY
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run the appropriate Python module from the project root. For example:
-
-```bash
-python -m src.pipeline
-```
-
-Other available pipeline versions include:
-
-```bash
-python -m src.pipeline_v2
-python -m src.pipeline_v3
-```
-
-Model training can be performed with:
-
-```bash
-python -m src.train_models
-```
-
-## Important
-
-Do not commit generated Python cache files such as:
-
-```text
-__pycache__/
-*.pyc
-```
-
-These files are automatically generated and should not be stored in Git.
-
-Create a `.gitignore` file in the project root with:
-
-```gitignore
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
-venv/
-.venv/
-env/
-
-# Environment variables
-.env
-
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-
-# Logs
-*.log
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Build files
-build/
-dist/
-*.egg-info/
-
-# Model/data files
-*.pkl
-*.pickle
-*.pt
-*.pth
-*.bin
-
-# Temporary files
-*.tmp
-*.temp
-```
-
-## Push the Project to GitHub
-
-### 1. Create a repository on GitHub
-
-Go to GitHub and create a new repository.
-
-For example:
-
-```text
-emotion-aware-recommendation-system
-```
-
-Do **not** initialize it with another README if you already have a local README.
-
-### 2. Open the project folder in Terminal
-
-Navigate to the folder containing:
-
-```text
+app.py                  Streamlit dashboard (M1-M4 in one app)
 src/
-README.md
-.gitignore
+  ingestion.py, preprocessing.py, sentiment.py, report.py, pipeline.py       M1
+  emotion_bert.py, emotion_distilbert.py, confidence.py, evaluation.py,
+  isear_validation.py, train_models.py, pipeline_v2.py, pipeline_v3.py       M2
+  emotional_state.py, hybrid_recommender.py, ranking.py, semantic_matching.py,
+  personalized_recommender.py, collaborative_filtering.py, emotion_history.py,
+  recommendation_feedback.py, recommendation_explainability.py,
+  recommendation_evaluation.py, pipeline_v4.py, model_cache.py               M3
+  m4_dashboard.py, reporting.py, security.py, stress_test.py, database.py,
+  api.py, cli.py                                                             M4
+frontend/               React (Vite) client for the FastAPI backend
+tests/                  pytest suite (M1-M4)
+data/                   sample corpora, ISEAR subset, local CSV/SQLite storage
+models/                 trained weights (not committed)
+docs/                   guides and references (below)
 ```
 
-For example:
+## Documentation
 
-```bash
-cd path/to/your/project
+| Document | Contents |
+|---|---|
+| [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) | Installation, environment variables, clean-environment check |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | Using the dashboard, React UI, CLI |
+| [docs/API_REFERENCE.md](docs/API_REFERENCE.md) | Every REST endpoint with examples |
+| [docs/MODEL_CARD.md](docs/MODEL_CARD.md) | Models, training, evaluation, limitations |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Docker, compose, model weights, production notes |
+| [docs/SECURITY.md](docs/SECURITY.md) | Validation, privacy, deletion, API-key authentication |
+| [docs/HANDOVER_CHECKLIST.md](docs/HANDOVER_CHECKLIST.md) | Milestone status and final validation |
+
+## Tests
+
+```powershell
+python -m compileall -q src app.py
+python -m pytest -q
 ```
 
-### 3. Initialize Git
+## Privacy
 
-```bash
-git init
-```
-
-### 4. Add the files
-
-```bash
-git add .
-```
-
-Check what will be committed:
-
-```bash
-git status
-```
-
-### 5. Create the first commit
-
-```bash
-git commit -m "Initial commit"
-```
-
-### 6. Connect the local project to GitHub
-
-Replace `YOUR_USERNAME` and `YOUR_REPOSITORY` with your GitHub username and repository name:
-
-```bash
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-```
-
-Verify the remote:
-
-```bash
-git remote -v
-```
-
-### 7. Push to GitHub
-
-Set the main branch:
-
-```bash
-git branch -M main
-```
-
-Then push:
-
-```bash
-git push -u origin main
-```
-
-Your project should now appear on GitHub.
-
-## Future Changes
-
-After modifying your code, use:
-
-```bash
-git add .
-git commit -m "Describe your changes"
-git push
-```
-
-For example:
-
-```bash
-git add .
-git commit -m "Improve emotion recommendation pipeline"
-git push
-```
-
-## Typical Git Workflow
-
-```bash
-git status
-git add .
-git commit -m "Update project"
-git push
-```
-
-## Troubleshooting
-
-### Remote already exists
-
-If you see:
-
-```text
-error: remote origin already exists
-```
-
-Check the existing remote:
-
-```bash
-git remote -v
-```
-
-If it is incorrect, change it:
-
-```bash
-git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-```
-
-Then:
-
-```bash
-git push -u origin main
-```
-
-### GitHub asks for authentication
-
-GitHub no longer accepts your normal account password for Git operations over HTTPS. Use GitHub authentication such as GitHub CLI or a Personal Access Token when prompted.
-
-### Push rejected because the GitHub repository already has files
-
-If the GitHub repository already contains a README or other initial commit, first run:
-
-```bash
-git pull origin main --allow-unrelated-histories
-```
-
-Resolve any conflicts if Git reports them, then:
-
-```bash
-git add .
-git commit -m "Merge remote repository"
-git push -u origin main
-```
-
-## License
-
-Add the license appropriate for your project before publishing the repository.
+Data is stored locally under `data/`. Do not commit real journal text or
+identifiers. Deletion removes a user's SQLite rows; see
+[docs/SECURITY.md](docs/SECURITY.md) for what it does not remove.

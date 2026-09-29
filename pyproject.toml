@@ -1,0 +1,33 @@
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moodmentor"
+version = "4.0.0"
+description = "MoodMentor: text sentiment, emotion analysis and personalized wellness recommendations"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.26",
+  "nltk>=3.9",
+  "vaderSentiment>=3.3.2",
+  "scikit-learn>=1.4",
+  "fastapi>=0.110",
+  "uvicorn>=0.30",
+  "pydantic>=2.0",
+  "streamlit>=1.36",
+  "reportlab>=4.0",
+]
+
+[project.optional-dependencies]
+ml = ["torch>=2.2", "transformers>=4.40", "datasets>=2.19", "accelerate>=0.30", "sentence-transformers>=3.0"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]
+
+[project.scripts]
+moodmentor = "src.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["src*"]

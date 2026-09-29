@@ -1,0 +1,10 @@
+
+.venv
+__pycache__
+.pytest_cache
+.git
+*.pyc
+reports
+data/*.db
+data/recommendation_feedback.csv
+data/emotion_history.csv

@@ -1,0 +1,89 @@
+[
+  {
+    "case_id": "E01",
+    "user_id": "eval_fear",
+    "text": "I feel very anxious and nervous about tomorrow and I cannot calm down.",
+    "relevant_ids": [
+      "W001",
+      "W002",
+      "W006"
+    ],
+    "k": 3,
+    "accepted_ids": [
+      "W001",
+      "W002"
+    ]
+  },
+  {
+    "case_id": "E02",
+    "user_id": "eval_anger",
+    "text": "I am furious about what happened and I need to pause before I react.",
+    "relevant_ids": [
+      "W005",
+      "W003",
+      "W001"
+    ],
+    "k": 3,
+    "accepted_ids": [
+      "W005"
+    ]
+  },
+  {
+    "case_id": "E03",
+    "user_id": "eval_sadness",
+    "text": "I have been feeling low and want some quiet reflection to understand my feelings.",
+    "relevant_ids": [
+      "W003",
+      "W004",
+      "W006"
+    ],
+    "k": 3,
+    "accepted_ids": [
+      "W003",
+      "W004"
+    ]
+  },
+  {
+    "case_id": "E04",
+    "user_id": "eval_joy",
+    "text": "I feel excited and positive and want to keep this good momentum going.",
+    "relevant_ids": [
+      "W007",
+      "W004"
+    ],
+    "k": 3,
+    "accepted_ids": [
+      "W007"
+    ]
+  },
+  {
+    "case_id": "E05",
+    "user_id": "eval_mixed",
+    "text": "I am excited about the opportunity but also nervous about the outcome.",
+    "relevant_ids": [
+      "W001",
+      "W002",
+      "W007"
+    ],
+    "k": 3,
+    "accepted_ids": [
+      "W001",
+      "W007"
+    ]
+  },
+  {
+    "case_id": "E06",
+    "user_id": "eval_surprise",
+    "text": "Everything changed suddenly and I need to ground myself and reflect before deciding what to do.",
+    "relevant_ids": [
+      "W002",
+      "W003",
+      "W007"
+    ],
+    "k": 3,
+    "accepted_ids": [
+      "W002",
+      "W003"
+    ]
+  }
+]

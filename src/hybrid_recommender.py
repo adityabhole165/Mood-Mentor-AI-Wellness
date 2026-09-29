@@ -17,11 +17,12 @@ EMOTION_TO_TAGS = {
 def _clamp(x): return max(0.0, min(1.0, float(x)))
 
 class HybridRecommendationEngine:
-    def __init__(self, contents, interactions=None, personalized_model=None):
+    def __init__(self, contents, interactions=None, personalized_model=None, feedback_model=None):
         self.contents = contents
         self.interactions = interactions or []
         self.cf = CollaborativeFilter(self.interactions)
         self.personalized_model = personalized_model or PersonalizedModel()
+        self.feedback_model = feedback_model
 
     def _rule_score(self, state, content):
         if state.dominant_emotion in content.emotions: return 1.0
@@ -60,8 +61,13 @@ class HybridRecommendationEngine:
                                       collaborative_score=cf, history_affinity=history, novelty=novelty,
                                       negative_severity=state.negative_emotion_load)
             ml = self.personalized_model.predict_one(features)
+            feedback_ml = self.feedback_model.predict_one(features) if self.feedback_model is not None else 0.0
+            feedback_active = bool(self.feedback_model is not None and self.feedback_model.fitted)
+            ml_combined = (0.65 * ml + 0.35 * feedback_ml) if feedback_active else ml
             rows.append({"content": c, "rule_score": rule, "content_similarity": semantic,
                          "preference_score": pref, "collaborative_score": cf, "emotion_relevance": emotion_rel,
                          "history_affinity": history, "novelty": novelty, "exposure_count": exposure,
-                         "personalized_ml_score": ml, "features": features})
+                         "personalized_ml_score": ml_combined, "base_personalized_ml_score": ml,
+                         "feedback_ml_score": feedback_ml, "feedback_learning_active": feedback_active,
+                         "features": features})
         return rows

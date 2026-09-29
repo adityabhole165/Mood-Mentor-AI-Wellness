@@ -33,7 +33,7 @@ class PersonalizedModel:
         return self
 
     def predict_one(self, features):
-        value = self.model.predict([features])[0] if self.fitted else self.baseline
+        value = self.model.predict([features])[0] if self.fitted and self.model is not None else self.baseline
         return float(np.clip(value, 0.0, 1.0))
 
 def train_personalized_model(interactions) -> PersonalizedModel:

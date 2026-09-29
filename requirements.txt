@@ -11,5 +11,5 @@ torch>=2.2
 datasets>=2.19
 scikit-learn>=1.4
 accelerate>=0.30
-
-
+pytest-cov
+sentence-transformers

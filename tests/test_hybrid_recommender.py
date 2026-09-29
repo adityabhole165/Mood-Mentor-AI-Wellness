@@ -1,5 +1,6 @@
 from src.emotional_state import analyze_emotional_state
 from src.hybrid_recommender import HybridRecommendationEngine
+from src.ranking import RecommendationRanker
 from src.recommendation_data import (
     DEFAULT_WELLNESS_CONTENT,
     Interaction,
@@ -88,3 +89,29 @@ def test_history_affinity_and_novelty_change_after_interaction():
     assert history == 0.8
     assert novelty == 0.0
     assert exposure == 1
+
+
+def test_feedback_model_is_blended_into_hybrid_score():
+    from src.personalized_recommender import PersonalizedModel
+    state = analyze_emotional_state({"joy": .05, "sadness": .6, "anger": .1, "fear": .7, "surprise": .05, "disgust": .02}, -.6)
+    profile = UserProfile("u1")
+    base = PersonalizedModel(baseline=0.2)
+    feedback = PersonalizedModel(baseline=0.9, fitted=True)
+    rows = HybridRecommendationEngine(DEFAULT_WELLNESS_CONTENT, [], base, feedback).generate_candidates(state, profile, {})
+    assert rows
+    assert all(r["feedback_learning_active"] for r in rows)
+    assert all(abs(r["personalized_ml_score"] - (.65*.2 + .35*.9)) < 1e-9 for r in rows)
+
+
+def test_history_affinity_can_change_rank_order():
+    from src.emotion_history import EmotionHistoryRecord
+    state = analyze_emotional_state({"joy": .02, "sadness": .1, "anger": .05, "fear": .9, "surprise": .02, "disgust": .01}, -.8)
+    profile = UserProfile("u1")
+    rows = HybridRecommendationEngine(DEFAULT_WELLNESS_CONTENT, []).generate_candidates(state, profile, {c.content_id: 0.1 for c in DEFAULT_WELLNESS_CONTENT})
+    ranker = RecommendationRanker(low_relevance_threshold=0.0)
+    before = [x.content_id for x in ranker.rank(rows, state, 7)]
+    for row in rows:
+        if row["content"].content_id == "W007":
+            row["history_affinity"] = 1.0
+    after = [x.content_id for x in ranker.rank(rows, state, 7)]
+    assert before != after
