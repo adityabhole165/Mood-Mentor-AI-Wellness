@@ -38,7 +38,9 @@ from transformers import (
 from .emotion_dataset import EMOTIONS, EmotionDataset, load_emotion_dataset
 
 MODEL_NAME = "bert-base-uncased"
-DEFAULT_SAVE_DIR = os.path.join("models", "bert_emotion")
+# only for local storage
+# DEFAULT_SAVE_DIR = os.path.join("models", "bert_emotion")
+DEFAULT_SAVE_DIR = os.getenv("MOODMENTOR_BERT_MODEL", os.path.join("models", "bert_emotion"))
 MAX_LENGTH = 128
 
 

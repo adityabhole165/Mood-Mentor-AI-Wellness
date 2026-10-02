@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { parseCsv, guessTextColumn } from "../utils/csv.js";
 
 const MODES = [
@@ -14,7 +14,20 @@ const EXAMPLES = {
   "😠 Frustrated": "I'm furious that my manager took credit for my work again. I can't stop thinking about it.",
 };
 
-export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, defaultUserId }) {
+const ALLOW_USER_ID_EDIT = import.meta.env.VITE_ALLOW_USER_ID_EDIT === "true";
+
+// lockUserId   : show the signed-in / guest ID read-only (set VITE_ALLOW_USER_ID_EDIT=true to unlock for demos)
+// blockedReason: when set, submitting is disabled and the reason is shown (e.g. consent not given)
+// maxChars     : input length cap (also enforced for uploaded files and CSV rows)
+export default function AnalyzeForm({
+  onSubmitSingle,
+  onSubmitBatch,
+  isLoading,
+  defaultUserId,
+  lockUserId = false,
+  blockedReason = null,
+  maxChars = 5000,
+}) {
   const [mode, setMode] = useState("chat");
   const [text, setText] = useState("");
   const [userId, setUserId] = useState(defaultUserId);
@@ -24,6 +37,11 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
   const [csvPreview, setCsvPreview] = useState(null); // { headers, records, textColumn }
   const [maxRows, setMaxRows] = useState(20);
   const [fileError, setFileError] = useState(null);
+
+  // Keep the field in sync when the signed-in identity changes.
+  useEffect(() => {
+    setUserId(defaultUserId);
+  }, [defaultUserId]);
 
   function handleModeChange(next) {
     setMode(next);
@@ -41,7 +59,11 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
     setFileError(null);
     setFileName(file.name);
     try {
-      setText(await file.text());
+      const raw = await file.text();
+      setText(raw.slice(0, maxChars));
+      if (raw.length > maxChars) {
+        setFileError(`That file is longer than ${maxChars} characters — only the first ${maxChars} will be analyzed.`);
+      }
     } catch (err) {
       setFileError("Could not read that file as text.");
     }
@@ -69,14 +91,14 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (isLoading) return;
+    if (isLoading || blockedReason) return;
     const uid = userId.trim() || "demo_user";
     const opts = { userId: uid, modelType, topK: Number(topK) };
 
     if (mode === "csv") {
       if (!csvPreview) return;
       const rows = csvPreview.records
-        .map((r, i) => ({ id: i + 1, text: String(r[csvPreview.textColumn] || "").trim() }))
+        .map((r, i) => ({ id: i + 1, text: String(r[csvPreview.textColumn] || "").trim().slice(0, maxChars) }))
         .filter((r) => r.text)
         .slice(0, Number(maxRows));
       if (rows.length) onSubmitBatch({ rows, ...opts });
@@ -126,7 +148,11 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="I've been feeling..."
+              maxLength={maxChars}
             />
+            <p className="hint" style={{ margin: "4px 0 0", textAlign: "right" }} aria-live="polite">
+              {text.length} / {maxChars}
+            </p>
           </div>
         </>
       )}
@@ -141,6 +167,8 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
               style={{ marginTop: 8 }}
               value={text}
               onChange={(e) => setText(e.target.value)}
+              maxLength={maxChars}
+              aria-label="Loaded text"
             />
           ) : null}
         </div>
@@ -189,7 +217,18 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
 
       <div className="field" style={{ marginTop: 4 }}>
         <label htmlFor="userId">User ID</label>
-        <input id="userId" value={userId} onChange={(e) => setUserId(e.target.value)} />
+        <input
+          id="userId"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+          readOnly={lockUserId && !ALLOW_USER_ID_EDIT}
+          aria-describedby={lockUserId && !ALLOW_USER_ID_EDIT ? "userIdHint" : undefined}
+        />
+        {lockUserId && !ALLOW_USER_ID_EDIT ? (
+          <p className="hint" id="userIdHint" style={{ margin: "4px 0 0" }}>
+            Your history is stored under this ID. <a href="#/login">Sign in</a> to keep it under your own name.
+          </p>
+        ) : null}
       </div>
 
       <div className="field-row">
@@ -219,7 +258,9 @@ export default function AnalyzeForm({ onSubmitSingle, onSubmitBatch, isLoading, 
         </p>
       ) : null}
 
-      <button className="btn btn-primary" type="submit" disabled={isLoading || !canSubmit}>
+      {blockedReason ? <p className="hint" style={{ marginBottom: 8 }}>{blockedReason}</p> : null}
+
+      <button className="btn btn-primary" type="submit" disabled={isLoading || !canSubmit || Boolean(blockedReason)}>
         {isLoading ? <span className="spinner" /> : null}
         {isLoading
           ? "Reading between the lines…"

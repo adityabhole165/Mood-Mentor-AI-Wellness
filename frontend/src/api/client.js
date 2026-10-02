@@ -18,6 +18,12 @@
 
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
+// Optional bearer token, set by the auth layer when the backend has /auth routes.
+let authToken = null;
+export function setAuthToken(token) {
+  authToken = token || null;
+}
+
 class ApiError extends Error {
   constructor(message, status) {
     super(message);
@@ -28,10 +34,15 @@ class ApiError extends Error {
 
 async function request(path, options = {}) {
   let response;
+  const { headers: extraHeaders, ...rest } = options;
   try {
     response = await fetch(`${BASE_URL}${path}`, {
-      headers: { "Content-Type": "application/json" },
-      ...options,
+      ...rest,
+      headers: {
+        "Content-Type": "application/json",
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        ...(extraHeaders || {}),
+      },
     });
   } catch (err) {
     throw new ApiError(
@@ -160,6 +171,31 @@ export function getReportUrl(userId, format = "csv") {
 
 export function deleteUserData(userId) {
   return request(`/users/${encodeURIComponent(userId)}/data`, { method: "DELETE" });
+}
+
+// --- Added endpoints (optional backend extras) ------------------------------
+// POST /explain        word-level "why this emotion?" weights (backend_extras/src/explain.py)
+// POST /auth/register  and POST /auth/login (backend_extras/src/auth.py)
+// If the backend doesn't have them the UI degrades gracefully (404 -> local mode / note).
+
+export function explainText({ text, modelType = "BERT", targetEmotion = null, maxWords = 40 }) {
+  return request("/explain", {
+    method: "POST",
+    body: JSON.stringify({
+      text,
+      model_type: modelType,
+      target_emotion: targetEmotion,
+      max_words: maxWords,
+    }),
+  });
+}
+
+export function authRegister({ username, password }) {
+  return request("/auth/register", { method: "POST", body: JSON.stringify({ username, password }) });
+}
+
+export function authLogin({ username, password }) {
+  return request("/auth/login", { method: "POST", body: JSON.stringify({ username, password }) });
 }
 
 export { ApiError, BASE_URL };

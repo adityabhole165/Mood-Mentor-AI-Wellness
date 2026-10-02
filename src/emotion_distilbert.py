@@ -29,7 +29,9 @@ from .emotion_dataset import EMOTIONS, EmotionDataset, load_emotion_dataset
 from .emotion_bert import EmotionPrediction, MAX_LENGTH  # reuse the same result shape
  
 MODEL_NAME = "distilbert-base-uncased"
-DEFAULT_SAVE_DIR = os.path.join("models", "distilbert_emotion")
+# DEFAULT_SAVE_DIR = os.path.join("models", "distilbert_emotion")
+DEFAULT_SAVE_DIR = os.getenv("MOODMENTOR_BERT_MODEL", os.path.join("models", "bert_emotion"))
+
  
  
 def load_pretrained_model(num_labels: int = len(EMOTIONS)):
