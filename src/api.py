@@ -87,6 +87,14 @@ class FeedbackRequest(BaseModel):
     rating: float | None = Field(default=None, ge=1, le=5)
     preference_changes: dict = {}
 
+@app.get("/")
+def root():
+    return {
+        "message": "MoodMentor API is running",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/health"
+    }
 @app.get("/health")
 def health():
     return {"status": "ok", "database": DB_PATH, "model_warmup": _warmup_state["status"]}
