@@ -1,4 +1,4 @@
-const CONTACT = import.meta.env.VITE_CONTACT_EMAIL || "your-email@example.com";
+const CONTACT = import.meta.env.VITE_CONTACT_EMAIL || "adityabhole0304@gmail.com";
 
 function Page({ title, updated, children }) {
   return (
