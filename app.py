@@ -77,7 +77,7 @@ from src.recommendation_evaluation import evaluate_rankings, recommendation_dive
 from src.evaluation_runner import load_evaluation_cases, run_controlled_evaluation as run_task9_evaluation
 from src.regression_tests import run_regression_tests
 from src.m4_dashboard import dashboard_snapshot, filter_records, search_dataframe, aggregate_emotion_trends, enrich_recommendation_history
-from src.reporting import generate_pdf_report, build_csv_bundle
+from src.reporting import build_csv_bundle
 from src.security import validate_user_id, sanitize_search_query
 
 
@@ -1069,16 +1069,6 @@ def render_milestone4(cfg):
     bundle = build_csv_bundle(snap)
     for name, data in bundle.items():
         st.download_button(f"Download {name}", data, file_name=name, mime="text/csv", key=f"m4_{name}")
-    if st.button("Generate PDF report", key="m4_pdf"):
-        os.makedirs(REPORTS_DIR, exist_ok=True)
-        pdf_path = os.path.join(REPORTS_DIR, f"mood_mentor_{cfg['user_id']}.pdf")
-        try:
-            generate_pdf_report(snap, pdf_path)
-            with open(pdf_path, "rb") as fh:
-                st.download_button("Download PDF", fh.read(), file_name=os.path.basename(pdf_path), mime="application/pdf", key="m4_pdf_download")
-        except Exception as exc:
-            logger.exception("PDF report generation failed")
-            st.error(f"PDF generation failed: {exc}")
 
     # Task 7: performance
     st.subheader("Task 7 · Model/recommendation performance smoke test")
