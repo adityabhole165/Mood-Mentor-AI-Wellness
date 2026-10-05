@@ -30,3 +30,11 @@ frontend/dist/
 frontend/.vite/
 frontend/React src.zip
 old_app.py
+
+**/__pycache__
+*.pyc
+venv
+.git
+data
+models
+*.zip

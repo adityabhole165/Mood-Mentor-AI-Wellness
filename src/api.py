@@ -35,8 +35,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in os.getenv(
         "MOOD_MENTOR_CORS_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000",
+        "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000",
     ).split(",") if o.strip()],
+    # Accept the production URL AND every Vercel preview URL (they change per deploy).
+    allow_origin_regex=os.getenv("MOOD_MENTOR_CORS_REGEX", r"https://.*\.vercel\.app"),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

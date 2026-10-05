@@ -1,27 +1,18 @@
 FROM python:3.11-slim
 
-RUN useradd -m -u 1000 user
-
 WORKDIR /app
 
-# Install CPU-only PyTorch
-RUN pip install --no-cache-dir torch \
-    --index-url https://download.pytorch.org/whl/cpu
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
-# Install Python dependencies
-COPY requirements_m4.txt .
-RUN pip install --no-cache-dir -r requirements_m4.txt
+COPY requirements.txt .
 
-# Copy application
-COPY --chown=user . /app
+RUN pip install --no-cache-dir -r requirements.txt
 
-# NLTK setup
-RUN python scripts/setup_nltk.py
+COPY src ./src
+COPY data ./data
 
-USER user
+EXPOSE 10000
 
-# FastAPI + Streamlit
-EXPOSE 7860 8501
-
-# Start both through startup script
-CMD ["bash", "start.sh"]
+CMD ["sh", "-c", "uvicorn src.api:app --host 0.0.0.0 --port ${PORT:-10000}"]

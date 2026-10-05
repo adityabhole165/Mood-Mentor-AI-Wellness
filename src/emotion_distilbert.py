@@ -30,7 +30,7 @@ from .emotion_bert import EmotionPrediction, MAX_LENGTH  # reuse the same result
  
 MODEL_NAME = "distilbert-base-uncased"
 # DEFAULT_SAVE_DIR = os.path.join("models", "distilbert_emotion")
-DEFAULT_SAVE_DIR = os.getenv("MOODMENTOR_BERT_MODEL", os.path.join("models", "bert_emotion"))
+DEFAULT_SAVE_DIR = os.getenv("MOODMENTOR_DISTILBERT_MODEL", os.path.join("models", "distilbert_emotion"))
 
  
  

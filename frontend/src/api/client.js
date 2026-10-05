@@ -16,8 +16,9 @@
 //   GET    /reports
 //   DELETE /users/{user_id}/data
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://mood-mentor-ai-wellness.onrender.com/").replace(/\/$/, "");
-// const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+// Production: set VITE_API_BASE_URL in Vercel (your Cloud Run URL, no trailing slash).
+// Local dev: falls back to the FastAPI server on your machine.
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
 // Optional bearer token, set by the auth layer when the backend has /auth routes.
 let authToken = null;
