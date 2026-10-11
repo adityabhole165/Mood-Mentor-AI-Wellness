@@ -16,9 +16,13 @@
 //   GET    /reports
 //   DELETE /users/{user_id}/data
 
-// Production: set VITE_API_BASE_URL in Vercel (your Cloud Run URL, no trailing slash).
+// Production: set VITE_API_BASE_URL in Vercel (e.g. https://ml-api-f92t.onrender.com, no trailing slash).
 // Local dev: falls back to the FastAPI server on your machine.
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const DEPLOYED_API = "https://ml-api-f92t.onrender.com";
+const BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? DEPLOYED_API : "http://127.0.0.1:8000")
+).replace(/\/$/, "");
 
 // Optional bearer token, set by the auth layer when the backend has /auth routes.
 let authToken = null;
