@@ -15,7 +15,8 @@ export default function SiteHeader({ route, theme, onToggleTheme }) {
   return (
     <header className="masthead site-header">
       <a className="brand" href="#/" onClick={() => setOpen(false)}>
-        <h1>MoodMentor</h1>
+        <h1>MOOD MENTOR</h1>
+        <p style={{ letterSpacing: "0.22em", fontWeight: 600, fontSize: 11, margin: "0 0 2px" }}>THE MIND COMPASS</p>
         <p>A quiet feedback loop for how you're actually doing.</p>
       </a>
 

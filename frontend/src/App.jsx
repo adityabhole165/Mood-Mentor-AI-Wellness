@@ -13,6 +13,7 @@ import HistoryTrends from "./components/HistoryTrends.jsx";
 import SiteHeader from "./components/SiteHeader.jsx";
 import SiteFooter from "./components/SiteFooter.jsx";
 import ApiStatusBanner from "./components/ApiStatusBanner.jsx";
+import HealthLoader from "./components/HealthLoader.jsx";
 import CrisisBanner, { shouldShowCrisis } from "./components/CrisisBanner.jsx";
 import ConsentCard from "./components/ConsentCard.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
@@ -35,7 +36,7 @@ const MAX_CHARS = 5000;
 const CONSENT_KEY = "moodmentor.consent.v1";
 
 const PAGE_TITLES = {
-  "/": "MoodMentor — understand how you feel",
+  "/": "MOOD MENTOR — THE MIND COMPASS",
   "/app": "Check in · MoodMentor",
   "/dashboard": "Dashboard · MoodMentor",
   "/about": "About · MoodMentor",
@@ -316,6 +317,7 @@ export default function App() {
 
   return (
     <div className="shell">
+      <HealthLoader />
       <a
         className="skip-link"
         href="#/"
