@@ -14,6 +14,14 @@ const EXAMPLES = {
   "😠 Frustrated": "I'm furious that my manager took credit for my work again. I can't stop thinking about it.",
 };
 
+// Splits an uploaded .txt file into one statement per non-empty line.
+function splitLines(raw) {
+  return String(raw || "")
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+}
+
 const ALLOW_USER_ID_EDIT = import.meta.env.VITE_ALLOW_USER_ID_EDIT === "true";
 
 // lockUserId   : show the signed-in / guest ID read-only (set VITE_ALLOW_USER_ID_EDIT=true to unlock for demos)
@@ -37,6 +45,8 @@ export default function AnalyzeForm({
   const [csvPreview, setCsvPreview] = useState(null); // { headers, records, textColumn }
   const [maxRows, setMaxRows] = useState(20);
   const [fileError, setFileError] = useState(null);
+  const [txtRaw, setTxtRaw] = useState(""); // full .txt contents, used for the per-line view
+  const [txtLineMode, setTxtLineMode] = useState(false); // analyze each line separately
 
   // Keep the field in sync when the signed-in identity changes.
   useEffect(() => {
@@ -50,6 +60,8 @@ export default function AnalyzeForm({
     if (next === "chat") {
       setFileName("");
       setText("");
+      setTxtRaw("");
+      setTxtLineMode(false);
     }
   }
 
@@ -61,7 +73,9 @@ export default function AnalyzeForm({
     try {
       const raw = await file.text();
       setText(raw.slice(0, maxChars));
-      if (raw.length > maxChars) {
+      setTxtRaw(raw);
+      setTxtLineMode(splitLines(raw).length > 1);
+      if (raw.length > maxChars && splitLines(raw).length <= 1) {
         setFileError(`That file is longer than ${maxChars} characters — only the first ${maxChars} will be analyzed.`);
       }
     } catch (err) {
@@ -105,10 +119,20 @@ export default function AnalyzeForm({
       return;
     }
 
+    if (mode === "txt" && txtLineMode && txtLines.length > 1) {
+      const rows = txtLines
+        .map((line, i) => ({ id: i + 1, text: line.slice(0, maxChars) }))
+        .slice(0, Number(maxRows));
+      if (rows.length) onSubmitBatch({ rows, ...opts });
+      return;
+    }
+
     if (!text.trim()) return;
     onSubmitSingle({ text: text.trim(), ...opts });
   }
 
+  const txtLines = txtLineMode ? splitLines(txtRaw) : [];
+  const txtRowsActive = mode === "txt" && txtLineMode && txtLines.length > 1;
   const canSubmit = mode === "csv" ? Boolean(csvPreview?.records?.length) : Boolean(text.trim());
 
   return (
@@ -162,7 +186,35 @@ export default function AnalyzeForm({
           <label htmlFor="txtFile">Upload a .txt file</label>
           <input id="txtFile" type="file" accept=".txt" onChange={handleTxtFile} />
           {fileName ? <p className="hint">Loaded: {fileName}</p> : null}
-          {text ? (
+          {txtRaw && splitLines(txtRaw).length > 1 ? (
+            <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8, fontWeight: 400 }}>
+              <input
+                type="checkbox"
+                checked={txtLineMode}
+                onChange={(e) => setTxtLineMode(e.target.checked)}
+              />
+              Analyze each line as a separate statement
+            </label>
+          ) : null}
+          {txtRowsActive ? (
+            <>
+              <p className="hint" style={{ marginTop: 6 }}>
+                {txtLines.length} line(s) found. After analyzing, each line gets a View button to open its analysis.
+              </p>
+              <label htmlFor="txtMaxRows" style={{ marginTop: 6 }}>
+                Max rows to analyze
+              </label>
+              <input
+                id="txtMaxRows"
+                type="number"
+                min={1}
+                max={200}
+                value={maxRows}
+                onChange={(e) => setMaxRows(e.target.value)}
+              />
+            </>
+          ) : null}
+          {text && !txtRowsActive ? (
             <textarea
               style={{ marginTop: 8 }}
               value={text}
@@ -264,7 +316,7 @@ export default function AnalyzeForm({
         {isLoading ? <span className="spinner" /> : null}
         {isLoading
           ? "Reading between the lines…"
-          : mode === "csv"
+          : mode === "csv" || txtRowsActive
           ? "Analyze rows"
           : "Analyze & recommend"}
       </button>
