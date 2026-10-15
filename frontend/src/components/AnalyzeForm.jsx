@@ -112,7 +112,7 @@ export default function AnalyzeForm({
     if (mode === "csv") {
       if (!csvPreview) return;
       const rows = csvPreview.records
-        .map((r, i) => ({ id: i + 1, text: String(r[csvPreview.textColumn] || "").trim().slice(0, maxChars) }))
+        .map((r, i) => ({ id: i + 1, text: String(r[csvPreview.textColumn] || "").trim().slice(0, maxChars), source: "csv" }))
         .filter((r) => r.text)
         .slice(0, Number(maxRows));
       if (rows.length) onSubmitBatch({ rows, ...opts });
@@ -121,7 +121,7 @@ export default function AnalyzeForm({
 
     if (mode === "txt" && txtLineMode && txtLines.length > 1) {
       const rows = txtLines
-        .map((line, i) => ({ id: i + 1, text: line.slice(0, maxChars) }))
+        .map((line, i) => ({ id: i + 1, text: line.slice(0, maxChars), source: "txt" }))
         .slice(0, Number(maxRows));
       if (rows.length) onSubmitBatch({ rows, ...opts });
       return;

@@ -5,6 +5,8 @@ import EmotionResult from "./components/EmotionResult.jsx";
 import RecommendationList from "./components/RecommendationList.jsx";
 import CandidatesTable from "./components/CandidatesTable.jsx";
 import BatchTable from "./components/BatchTable.jsx";
+import BatchCharts from "./components/BatchCharts.jsx";
+import DashboardBatchCharts from "./components/DashboardBatchCharts.jsx";
 import FeedbackLog from "./components/FeedbackLog.jsx";
 import StatsPanel from "./components/StatsPanel.jsx";
 import HistoryTrends from "./components/HistoryTrends.jsx";
@@ -26,6 +28,7 @@ import { useAuth } from "./auth/AuthContext.jsx";
 import useHashRoute from "./hooks/useHashRoute.js";
 import useTheme from "./hooks/useTheme.js";
 import { analyzeText, compareModels, ApiError } from "./api/client.js";
+import { appendBatchEntry, toBatchEntry } from "./utils/batchStore.js";
 
 const BATCH_CONCURRENCY = 3;
 const MAX_CHARS = 5000;
@@ -162,14 +165,19 @@ export default function App() {
     setSelectedBatchId(null);
 
     let firstDoneSelected = false;
+    const runId = Date.now();
+    const source = rows.length && rows[0].source ? rows[0].source : "file";
     try {
       await runWithConcurrency(
         rows,
         (row) =>
-          analyzeText({ text: row.text, userId: uid, modelType, topK, persistHistory: false }),
+          analyzeText({ text: row.text, userId: uid, modelType, topK, persistHistory: true }),
         BATCH_CONCURRENCY,
         (row, outcome) => {
           setBatchRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, ...outcome } : r)));
+          if (outcome.status === "done" && outcome.result) {
+            appendBatchEntry(uid, toBatchEntry(runId, { ...row, result: outcome.result }, row.source || source));
+          }
           if (outcome.status === "done" && !firstDoneSelected) {
             firstDoneSelected = true;
             setSelectedBatchId(row.id);
@@ -248,6 +256,7 @@ export default function App() {
             {batchRows ? (
               <>
                 <BatchTable rows={batchRows} selectedId={selectedBatchId} onSelect={setSelectedBatchId} />
+                <BatchCharts rows={batchRows} />
                 {selectedRow ? (
                   <>
                     <p className="hint">Details for row #{selectedRow.id}: “{selectedRow.text.slice(0, 120)}”</p>
@@ -285,6 +294,7 @@ export default function App() {
             <div className="feed dashboard-wrap">
               <StatsPanel />
               <YearInPixels userId={userId} />
+              <DashboardBatchCharts userId={userId} />
               <HistoryTrends userId={userId} />
             </div>
           </>
