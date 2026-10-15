@@ -1,4 +1,5 @@
 import { downloadCsv } from "../utils/csv.js";
+import { downloadPdf } from "../utils/pdf.js";
 
 function preview(text, n = 70) {
   return text.length > n ? `${text.slice(0, n)}…` : text;
@@ -26,13 +27,50 @@ export default function BatchTable({ rows, selectedId, onSelect }) {
     downloadCsv("mood_mentor_batch_report.csv", headers, data);
   }
 
+  async function exportPdf() {
+    await downloadPdf({
+      filename: "mood_mentor_batch_report.pdf",
+      title: "MoodMentor — Batch report",
+      summary: [
+        `Entries analysed: ${done.length}/${rows.length}`,
+        `Avg compound: ${avgCompound.toFixed(3)}   Positive: ${counts.positive}   Neutral: ${counts.neutral}   Negative: ${counts.negative}`,
+      ],
+      sections: [
+        {
+          title: "Results",
+          columns: [
+            { key: "id", label: "#" },
+            { key: "text", label: "Text" },
+            { key: "sentiment_label", label: "Sentiment" },
+            { key: "compound", label: "Compound" },
+            { key: "primary_emotion", label: "Primary emotion" },
+            { key: "confidence", label: "Confidence" },
+          ],
+          rows: done.map((r) => ({
+            id: r.id,
+            text: r.text,
+            sentiment_label: r.result.sentiment.label,
+            compound: r.result.sentiment.compound,
+            primary_emotion: r.result.confidence?.primary_emotion,
+            confidence: r.result.confidence?.primary_confidence,
+          })),
+        },
+      ],
+    });
+  }
+
   return (
     <div className="panel">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
         <h2 style={{ fontSize: 16 }}>Batch results ({done.length}/{rows.length})</h2>
-        <button className="btn btn-ghost btn-sm" onClick={exportCsv} disabled={!done.length}>
-          Download CSV report
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="btn btn-ghost btn-sm" onClick={exportCsv} disabled={!done.length}>
+            Download CSV report
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={exportPdf} disabled={!done.length}>
+            Export PDF
+          </button>
+        </div>
       </div>
 
       <div className="metric-row" style={{ marginBottom: 14 }}>

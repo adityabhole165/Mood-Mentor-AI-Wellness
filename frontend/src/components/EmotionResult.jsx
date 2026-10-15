@@ -1,3 +1,5 @@
+import { emotionColor, emotionEmoji } from "../utils/emotions.js";
+
 function polarityPillClass(polarity) {
   if (polarity === "positive") return "pill pill-positive";
   if (polarity === "negative") return "pill pill-negative";
@@ -21,7 +23,8 @@ export default function EmotionResult({ result, label }) {
           <small>Dominant emotion</small>
           {state.dominant_emotion || "—"}
         </div>
-        <div className="metric-row" style={{ marginTop: 0 }}>
+        {/* polarity + severity labels sit on their own line below the emotion */}
+        <div className="metric-row state-hero-labels">
           <span className={polarityPillClass(state.polarity)}>
             {state.polarity} · {Number(state.polarity_score ?? 0).toFixed(2)}
           </span>
@@ -50,15 +53,24 @@ export default function EmotionResult({ result, label }) {
       </div>
 
       <div className="bars">
-        {probabilities.map(([emotion, score]) => (
-          <div className="bar-row" key={emotion}>
-            <span className="label">{emotion}</span>
-            <span className="bar-track">
-              <span className="bar-fill" style={{ width: `${Math.round(score * 100)}%` }} />
-            </span>
-            <span className="value">{Math.round(score * 100)}%</span>
-          </div>
-        ))}
+        {probabilities.map(([emotion, score]) => {
+          const pct = Math.round(Math.max(0, Math.min(1, score)) * 100);
+          const color = emotionColor(emotion);
+          return (
+            <div className="bar-row" key={emotion}>
+              <span className="label">
+                {emotionEmoji(emotion)} {emotion}
+              </span>
+              <span className="bar-track" style={{ background: `${color}26` }}>
+                <span
+                  className="bar-fill"
+                  style={{ width: `${pct}%`, background: color }}
+                />
+              </span>
+              <span className="value" style={{ color }}>{pct}%</span>
+            </div>
+          );
+        })}
       </div>
 
       <p className="hint" style={{ marginTop: 10, marginBottom: 0 }}>

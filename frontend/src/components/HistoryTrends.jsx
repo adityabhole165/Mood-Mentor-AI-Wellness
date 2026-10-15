@@ -7,6 +7,8 @@ import {
   getReportUrl,
   deleteUserData,
 } from "../api/client.js";
+import { downloadPdf } from "../utils/pdf.js";
+import { EmotionTrendChart, EmotionFrequencyChart, EmotionScoreChart } from "./EmotionCharts.jsx";
 
 function Section({ title, children }) {
   return (
@@ -255,6 +257,28 @@ export default function HistoryTrends({ userId }) {
     return <DataTable rows={filtered} columns={columns} emptyMessage={emptyMessage} paginate={paginate} />;
   }
 
+  function sectionItems(section) {
+    if (!section?.available) return [];
+    if (Array.isArray(section.data?.items)) return section.data.items;
+    return Array.isArray(section.data) ? section.data : [];
+  }
+
+  async function exportPdf() {
+    const trend = data.trends?.available ? data.trends.data || {} : {};
+    await downloadPdf({
+      filename: `mood_mentor_report_${userId}.pdf`,
+      title: "MoodMentor — History & trends report",
+      summary: [`User: ${userId}`, `Trend granularity: ${granularity}`],
+      sections: [
+        { title: "Emotional trend", columns: TREND_COLUMNS, rows: trend.trend || [] },
+        { title: "Emotion frequency", columns: FREQUENCY_COLUMNS, rows: trend.emotion_frequency || [] },
+        { title: "Emotion history", columns: HISTORY_COLUMNS, rows: sectionItems(data.emotions) },
+        { title: "Recommendations", columns: RECOMMENDATION_COLUMNS, rows: sectionItems(data.recommendations) },
+        { title: "Feedback", columns: FEEDBACK_COLUMNS, rows: sectionItems(data.feedback) },
+      ],
+    });
+  }
+
   const trendSection = data.trends;
   const trendRows =
     trendSection?.available && trendSection.data ? filterRows(trendSection.data.trend || [], query) : [];
@@ -300,12 +324,27 @@ export default function HistoryTrends({ userId }) {
           <p className="not-available">Not available on this backend.</p>
         ) : (
           <>
-            <DataTable rows={trendRows} columns={TREND_COLUMNS} emptyMessage="No trend data yet." />
+            <EmotionTrendChart rows={trendRows} />
+            <div style={{ marginTop: 10 }}>
+              <DataTable rows={trendRows} columns={TREND_COLUMNS} emptyMessage="No trend data yet." />
+            </div>
             <div style={{ marginTop: 10 }}>
               <p className="hint" style={{ marginBottom: 6 }}>Emotion frequency</p>
+              <EmotionFrequencyChart rows={frequencyRows} />
+              <div style={{ marginTop: 10 }} />
               <DataTable rows={frequencyRows} columns={FREQUENCY_COLUMNS} emptyMessage="No emotion frequency data yet." />
             </div>
           </>
+        )}
+      </Section>
+
+      <Section title="Emotion scores">
+        {!data.emotions ? (
+          <p className="hint">Not loaded yet.</p>
+        ) : !data.emotions.available ? (
+          <p className="not-available">Not available on this backend.</p>
+        ) : (
+          <EmotionScoreChart items={sectionItems(data.emotions)} />
         )}
       </Section>
 
@@ -331,6 +370,9 @@ export default function HistoryTrends({ userId }) {
           <a className="btn btn-ghost btn-sm" href={getReportUrl(userId, "json")}>
             Download JSON report
           </a>
+          <button className="btn btn-ghost btn-sm" onClick={exportPdf} disabled={loading}>
+            Export PDF
+          </button>
         </div>
       </Section>
 
